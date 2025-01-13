@@ -1,10 +1,14 @@
+import { Extensions, Phases } from '@shakerquiz/utilities'
 import { type } from '@yurkimus/types'
 import { useCallback, useEffect, useState } from 'react'
 
-import { Phases } from 'source/enumerations/phases'
-
+/**
+ * @template {{ fetch: any }} Contract
+ *
+ * @param {Contract} contract
+ */
 export let phased = contract => {
-  /** @type {typeof useState<keyof Phases>} */
+  /** @type {ReturnType<typeof useState<keyof typeof Phases>>} */
   let [phase, setPhase] = useState(Phases.Idle)
 
   let onbefore = useCallback(() => void setPhase(Phases.Loading), [])
@@ -52,15 +56,18 @@ export let phased = contract => {
       undefined,
       contract.fetch,
       {
-        onbefore: extensions
+        onbefore: Extensions
+          .get(contract.fetch)
           .onbefore
           .delete(onbefore),
 
-        onfulfilled: extensions
+        onfulfilled: Extensions
+          .get(contract.fetch)
           .onfulfilled
           .delete(onfulfilled),
 
-        onrejected: extensions
+        onrejected: Extensions
+          .get(contract.fetch)
           .onfulfilled
           .delete(onrejected),
       },

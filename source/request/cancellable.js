@@ -1,5 +1,11 @@
+import { Extensions } from '@shakerquiz/utilities'
 import { useCallback, useEffect, useRef } from 'react'
 
+/**
+ * @template {{ fetch: any }} Contract
+ *
+ * @param {Contract} contract
+ */
 export let cancellable = contract => {
   /** @type {import('react').RefObject<AbortController>} */
   let reference = useRef(null)
@@ -44,15 +50,18 @@ export let cancellable = contract => {
       undefined,
       contract.fetch,
       {
-        onbefore: extensions
+        onbefore: Extensions
+          .get(contract.fetch)
           .onbefore
           .delete(onbefore),
 
-        onfulfilled: extensions
+        onfulfilled: Extensions
+          .get(contract.fetch)
           .onfulfilled
           .delete(() => console.log('Phase.Loaded')),
 
-        onrejected: extensions
+        onrejected: Extensions
+          .get(contract.fetch)
           .onfulfilled
           .delete(() => console.log('Phase.Failed')),
       },
