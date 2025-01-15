@@ -11,27 +11,40 @@ export let phased = contract => {
   /** @type {ReturnType<typeof useState<keyof typeof Phases>>} */
   let [phase, setPhase] = useState(Phases.Idle)
 
-  let onbefore = useCallback(() => void setPhase(Phases.Loading), [])
+  let onbefore = useCallback(
+    parameters => {
+      setPhase(Phases.Loading)
 
-  let onfulfilled = useCallback(contract => {
-    setPhase(Phases.Loading)
+      return parameters
+    },
+    [],
+  )
 
-    return contract
-  }, [])
+  let onfulfilled = useCallback(
+    contract => {
+      setPhase(Phases.Loading)
 
-  let onrejected = useCallback(reason => {
-    switch (type(reason)) {
-      case 'AbortError':
-        setPhase(Phases.Aborted)
-        break
+      return contract
+    },
+    [],
+  )
 
-      default:
-        setPhase(Phases.Failed)
-        break
-    }
+  let onrejected = useCallback(
+    reason => {
+      switch (type(reason)) {
+        case 'AbortError':
+          setPhase(Phases.Aborted)
+          break
 
-    throw reason
-  }, [])
+        default:
+          setPhase(Phases.Failed)
+          break
+      }
+
+      throw reason
+    },
+    [],
+  )
 
   useEffect(() => {
     Extensions

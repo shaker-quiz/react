@@ -12,30 +12,34 @@ export let cancellable = contract => {
   let reference = useRef(null)
 
   let onbefore = useCallback(
-    /**
-     * @param {object} options
-     * @param {RequestInit} init
-     */
-    (options, init) => {
+    parameters => {
       if (reference.current === null)
         reference.current = new AbortController()
 
       init.signal = reference.current.signal
+
+      return parameters
     },
     [],
   )
 
-  let onfulfilled = useCallback(contract => {
-    reference.current = null
+  let onfulfilled = useCallback(
+    contract => {
+      reference.current = null
 
-    return contract
-  }, [])
+      return contract
+    },
+    [],
+  )
 
-  let onrejected = useCallback(reason => {
-    reference.current = null
+  let onrejected = useCallback(
+    reason => {
+      reference.current = null
 
-    throw reason
-  }, [])
+      throw reason
+    },
+    [],
+  )
 
   useEffect(() => {
     Extensions
@@ -54,6 +58,11 @@ export let cancellable = contract => {
       .add(onrejected)
 
     return () => {
+      if (reference.current)
+        reference.current.abort(AbortError(
+          `'useEffect' destructr has been called.`,
+        ))
+
       Extensions
         .get(contract.fetch)
         .get('onbefore')
@@ -68,11 +77,6 @@ export let cancellable = contract => {
         .get(contract.fetch)
         .get('onrejected')
         .delete(onrejected)
-
-      if (reference.current)
-        reference.current.abort(AbortError(
-          `'useEffect' destructr has been called.`,
-        ))
     }
   }, [])
 
