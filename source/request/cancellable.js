@@ -69,9 +69,10 @@ export let cancellable = contract => {
         .get('onrejected')
         .delete(onrejected)
 
-      reference.current.abort(AbortError(
-        `'useEffect' destructr has been called.`,
-      ))
+      if (reference.current)
+        reference.current.abort(AbortError(
+          `'useEffect' destructr has been called.`,
+        ))
     }
   }, [])
 
