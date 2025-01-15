@@ -28,44 +28,37 @@ export let cancellable = contract => {
   }, [])
 
   useEffect(() => {
-    if (Extensions.has(contract.fetch))
-      Extensions.set(contract.fetch, {
-        onbefore: Extensions
-          .get(contract.fetch)
-          .onbefore
-          .add(onbefore),
+    Extensions
+      .get(contract.fetch)
+      .get('onbefore')
+      .add(onbefore)
 
-        onfulfilled: Extensions
-          .get(contract.fetch)
-          .onfulfilled
-          .add(onfulfilled),
+    Extensions
+      .get(contract.fetch)
+      .get('onfulfilled')
+      .add(onfulfilled)
 
-        onrejected: Extensions
-          .get(contract.fetch)
-          .onfulfilled
-          .add(onrejected),
-      })
+    Extensions
+      .get(contract.fetch)
+      .get('onrejected')
+      .add(onrejected)
 
-    return Extensions.set.bind(
-      Extensions,
-      contract.fetch,
-      {
-        onbefore: Extensions
-          .get(contract.fetch)
-          .onbefore
-          .delete(onbefore),
+    return () => {
+      Extensions
+        .get(contract.fetch)
+        .get('onbefore')
+        .delete(onbefore)
 
-        onfulfilled: Extensions
-          .get(contract.fetch)
-          .onfulfilled
-          .delete(() => console.log('Phase.Loaded')),
+      Extensions
+        .get(contract.fetch)
+        .get('onfulfilled')
+        .delete(onfulfilled)
 
-        onrejected: Extensions
-          .get(contract.fetch)
-          .onfulfilled
-          .delete(() => console.log('Phase.Failed')),
-      },
-    )
+      Extensions
+        .get(contract.fetch)
+        .get('onrejected')
+        .delete(onrejected)
+    }
   }, [])
 
   return {
