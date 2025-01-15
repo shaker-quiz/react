@@ -1,6 +1,6 @@
 import { Extensions, Phases } from '@shakerquiz/utilities'
 import { type } from '@yurkimus/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 /**
  * @template {{ fetch: any }} Contract
@@ -11,26 +11,20 @@ export let phased = contract => {
   /** @type {ReturnType<typeof useState<keyof typeof Phases>>} */
   let [phase, setPhase] = useState(Phases.Idle)
 
-  let onbefore = useCallback(
-    parameters => {
+  useEffect(() => {
+    let onbefore = parameters => {
       setPhase(Phases.Loading)
 
       return parameters
-    },
-    [],
-  )
+    }
 
-  let onfulfilled = useCallback(
-    contract => {
+    let onfulfilled = contract => {
       setPhase(Phases.Loading)
 
       return contract
-    },
-    [],
-  )
+    }
 
-  let onrejected = useCallback(
-    reason => {
+    let onrejected = reason => {
       switch (type(reason)) {
         case 'AbortError':
           setPhase(Phases.Aborted)
@@ -40,13 +34,8 @@ export let phased = contract => {
           setPhase(Phases.Failed)
           break
       }
+    }
 
-      throw reason
-    },
-    [],
-  )
-
-  useEffect(() => {
     Extensions
       .get(contract.fetch)
       .get('onbefore')

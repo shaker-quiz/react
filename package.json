@@ -1,6 +1,6 @@
 {
   "name": "@shakerquiz/react",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "exports": {
     ".": {
       "types": "./source/index.d.ts",

@@ -1,6 +1,6 @@
 import { Extensions } from '@shakerquiz/utilities'
 import { AbortError } from '@yurkimus/errors'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 /**
  * @template {{ fetch: any }} Contract
@@ -11,8 +11,8 @@ export let cancellable = contract => {
   /** @type {import('react').RefObject<AbortController>} */
   let reference = useRef(null)
 
-  let onbefore = useCallback(
-    parameters => {
+  useEffect(() => {
+    let onbefore = parameters => {
       if (reference.current === null)
         reference.current = new AbortController()
 
@@ -21,29 +21,16 @@ export let cancellable = contract => {
         .signal = reference.current.signal
 
       return parameters
-    },
-    [],
-  )
+    }
 
-  let onfulfilled = useCallback(
-    contract => {
+    let onfulfilled = contract => {
       reference.current = null
 
       return contract
-    },
-    [],
-  )
+    }
 
-  let onrejected = useCallback(
-    reason => {
-      reference.current = null
+    let onrejected = reason => void (reference.current = null)
 
-      throw reason
-    },
-    [],
-  )
-
-  useEffect(() => {
     Extensions
       .get(contract.fetch)
       .get('onbefore')
@@ -62,7 +49,7 @@ export let cancellable = contract => {
     return () => {
       if (reference.current)
         reference.current.abort(AbortError(
-          `'useEffect' destructr has been called.`,
+          `'useEffect' destructor has been called.`,
         ))
 
       Extensions
