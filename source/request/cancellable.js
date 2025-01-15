@@ -1,4 +1,5 @@
 import { Extensions } from '@shakerquiz/utilities'
+import { AbortError } from '@yurkimus/errors'
 import { useCallback, useEffect, useRef } from 'react'
 
 /**
@@ -10,10 +11,19 @@ export let cancellable = contract => {
   /** @type {import('react').RefObject<AbortController>} */
   let reference = useRef(null)
 
-  let onbefore = useCallback(() => {
-    if (reference.current === null)
-      reference.current = new AbortController()
-  }, [])
+  let onbefore = useCallback(
+    /**
+     * @param {object} options
+     * @param {RequestInit} init
+     */
+    (options, init) => {
+      if (reference.current === null)
+        reference.current = new AbortController()
+
+      init.signal = reference.current.signal
+    },
+    [],
+  )
 
   let onfulfilled = useCallback(contract => {
     reference.current = null
@@ -58,6 +68,10 @@ export let cancellable = contract => {
         .get(contract.fetch)
         .get('onrejected')
         .delete(onrejected)
+
+      reference.current.abort(AbortError(
+        `'useEffect' destructr has been called.`,
+      ))
     }
   }, [])
 
