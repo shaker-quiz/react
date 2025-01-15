@@ -53,7 +53,7 @@ export let phased = contract => {
       })
 
     return Extensions.set.bind(
-      undefined,
+      Extensions,
       contract.fetch,
       {
         onbefore: Extensions
