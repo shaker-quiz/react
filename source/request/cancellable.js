@@ -16,7 +16,9 @@ export let cancellable = contract => {
       if (reference.current === null)
         reference.current = new AbortController()
 
-      init.signal = reference.current.signal
+      parameters
+        .at(1)
+        .signal = reference.current.signal
 
       return parameters
     },
