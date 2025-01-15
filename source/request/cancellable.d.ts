@@ -1,3 +1,7 @@
 export let cancellable: <Contract extends { fetch: any }>(
   contract: Contract,
-) => any
+) =>
+  & Contract
+  & {
+    controller: AbortController
+  }
