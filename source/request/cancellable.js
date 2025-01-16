@@ -13,10 +13,11 @@ export let cancellable = contract => {
 
   useEffect(() => {
     let onbefore = ([options, init]) => {
-      if (reference.current === null)
-        reference.current = new AbortController()
+      reference.current = new AbortController()
 
-      return [options, { ...init, signal: reference.current.signal }]
+      init.signal = reference.current?.signal
+
+      return [options, init]
     }
 
     let onfulfilled = contract => {
@@ -43,11 +44,6 @@ export let cancellable = contract => {
       .add(onrejected)
 
     return () => {
-      if (reference.current)
-        reference.current.abort(AbortError(
-          `'useEffect' destructor has been called.`,
-        ))
-
       Extensions
         .get(contract.fetch)
         .get('onbefore')
@@ -62,6 +58,11 @@ export let cancellable = contract => {
         .get(contract.fetch)
         .get('onrejected')
         .delete(onrejected)
+
+      if (reference.current)
+        reference.current.abort(AbortError(
+          `'useEffect' destructor has been called.`,
+        ))
     }
   }, [])
 
