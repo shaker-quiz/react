@@ -8,31 +8,23 @@ import { useEffect, useState } from 'react'
  * @param {Contract} contract
  */
 export let phased = contract => {
-  console.log('[phased]')
-
   /** @type {ReturnType<typeof useState<keyof typeof Phases>>} */
   let [phase, setPhase] = useState(Phases.Idle)
 
   useEffect(() => {
     let onbefore = parameters => {
-      console.log('[onbefore]', parameters)
-
       setPhase(Phases.Loading)
 
       return parameters
     }
 
     let onfulfilled = contract => {
-      console.log('onfulfilled', contract)
-
       setPhase(Phases.Loaded)
 
       return contract
     }
 
     let onrejected = reason => {
-      console.log('onrejected', reason)
-
       switch (type(reason)) {
         case 'AbortError':
           setPhase(Phases.Aborted)
