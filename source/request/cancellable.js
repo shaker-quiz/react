@@ -12,15 +12,11 @@ export let cancellable = contract => {
   let reference = useRef(null)
 
   useEffect(() => {
-    let onbefore = parameters => {
+    let onbefore = ([options, init]) => {
       if (reference.current === null)
         reference.current = new AbortController()
 
-      parameters
-        .at(1)
-        .signal = reference.current.signal
-
-      return parameters
+      return [options, { ...init, signal: reference.current.signal }]
     }
 
     let onfulfilled = contract => {
