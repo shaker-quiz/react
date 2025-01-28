@@ -6,6 +6,6 @@ export let phased: <Contract extends { fetch: any }>(
 ) =>
   & Contract
   & {
-    phase: ReturnType<typeof useState<keyof typeof Phases>>[0]
+    phase: keyof typeof Phases
     setPhase: ReturnType<typeof useState<keyof typeof Phases>>[1]
   }
