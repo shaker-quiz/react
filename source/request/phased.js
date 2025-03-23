@@ -1,4 +1,4 @@
-import { Extensions, Phases } from '@shakerquiz/utilities'
+import { extensions, Phases } from '@shakerquiz/utilities'
 import { type } from '@yurkimus/types'
 import { useEffect, useState } from 'react'
 
@@ -7,24 +7,24 @@ import { useEffect, useState } from 'react'
  *
  * @param {Contract} contract
  */
-export let phased = contract => {
+export var phased = contract => {
   /** @type {ReturnType<typeof useState<keyof typeof Phases>>} */
-  let [phase, setPhase] = useState(Phases.Idle)
+  var [phase, setPhase] = useState(Phases.Idle)
 
   useEffect(() => {
-    let onbefore = parameters => {
+    var onbefore = request => {
       setPhase(Phases.Loading)
 
-      return parameters
+      return request
     }
 
-    let onfulfilled = contract => {
+    var onfulfilled = response => {
       setPhase(Phases.Loaded)
 
-      return contract
+      return response
     }
 
-    let onrejected = reason => {
+    var onrejected = reason => {
       switch (type(reason)) {
         case 'AbortError':
           setPhase(Phases.Aborted)
@@ -34,35 +34,37 @@ export let phased = contract => {
           setPhase(Phases.Failed)
           break
       }
+
+      throw reason
     }
 
-    Extensions
+    extensions
       .get(contract.fetch)
       .get('onbefore')
       .add(onbefore)
 
-    Extensions
+    extensions
       .get(contract.fetch)
       .get('onfulfilled')
       .add(onfulfilled)
 
-    Extensions
+    extensions
       .get(contract.fetch)
       .get('onrejected')
       .add(onrejected)
 
     return () => {
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onbefore')
         .delete(onbefore)
 
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onfulfilled')
         .delete(onfulfilled)
 
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onrejected')
         .delete(onrejected)

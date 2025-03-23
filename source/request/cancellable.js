@@ -1,4 +1,4 @@
-import { Extensions } from '@shakerquiz/utilities'
+import { extensions } from '@shakerquiz/utilities'
 import { AbortError } from '@yurkimus/errors'
 import { useEffect, useRef } from 'react'
 
@@ -12,49 +12,53 @@ export let cancellable = contract => {
   let reference = useRef(null)
 
   useEffect(() => {
-    let onbefore = ([options, init]) => {
+    let onbefore = request => {
       reference.current = new AbortController()
 
-      init.signal = reference.current?.signal
+      request.signal = reference.current?.signal
 
-      return [options, init]
+      return request
     }
 
-    let onfulfilled = contract => {
+    let onfulfilled = response => {
       reference.current = null
 
-      return contract
+      return response
     }
 
-    let onrejected = reason => void (reference.current = null)
+    let onrejected = reason => {
+      reference.current = null
 
-    Extensions
+      throw reason
+    }
+
+    extensions
       .get(contract.fetch)
       .get('onbefore')
       .add(onbefore)
 
-    Extensions
+    extensions
       .get(contract.fetch)
       .get('onfulfilled')
       .add(onfulfilled)
 
-    Extensions
+    extensions
       .get(contract.fetch)
       .get('onrejected')
       .add(onrejected)
 
     return () => {
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onbefore')
         .delete(onbefore)
 
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onfulfilled')
         .delete(onfulfilled)
 
-      Extensions
+      extensions
         .get(contract.fetch)
         .get('onrejected')
         .delete(onrejected)
