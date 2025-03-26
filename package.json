@@ -1,6 +1,6 @@
 {
   "name": "@shakerquiz/react",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "exports": {
     ".": {
       "types": "./source/index.d.ts",
@@ -8,7 +8,7 @@
     }
   },
   "dependencies": {
-    "@shakerquiz/utilities": "0.3.5",
+    "@shakerquiz/utilities": "0.3.6",
     "@yurkimus/errors": "0.1.4",
     "@yurkimus/types": "0.2.3"
   },
