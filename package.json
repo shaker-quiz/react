@@ -1,10 +1,10 @@
 {
   "name": "@shakerquiz/react",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "exports": {
     ".": {
-      "types": "./source/index.d.ts",
-      "import": "./source/index.js"
+      "import": "./source/index.js",
+      "types": "./source/index.d.ts"
     }
   },
   "dependencies": {

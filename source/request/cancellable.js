@@ -15,9 +15,7 @@ export let cancellable = contract => {
     let onbefore = request => {
       reference.current = new AbortController()
 
-      request.signal = reference.current?.signal
-
-      return request
+      return new Request(request, { signal: reference.current?.signal })
     }
 
     let onfulfilled = response => {
