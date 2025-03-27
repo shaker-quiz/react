@@ -7,27 +7,27 @@ import { useEffect, useRef } from 'react'
  *
  * @param {Contract} contract
  */
-export let cancellable = contract => {
+export var cancellable = contract => {
   /** @type {import('react').RefObject<AbortController>} */
-  let reference = useRef(null)
+  var reference = useRef(null)
 
   useEffect(() => {
-    let onbefore = request => {
+    var onbefore = request => {
       reference.current = new AbortController()
 
       return new Request(request, { signal: reference.current?.signal })
     }
 
-    let onfulfilled = response => {
+    var onfulfilled = response => {
       reference.current = null
 
       return response
     }
 
-    let onrejected = reason => {
+    var onrejected = reason => {
       reference.current = null
 
-      throw reason
+      return reason
     }
 
     extensions

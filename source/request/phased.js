@@ -35,7 +35,7 @@ export var phased = contract => {
           break
       }
 
-      throw reason
+      return reason
     }
 
     extensions
